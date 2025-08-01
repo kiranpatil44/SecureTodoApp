@@ -2,7 +2,7 @@
  * @format
  */
 
-import 'expo-modules-core/build/web/index.js';
+import 'expo-modules-core/build/index.js';
 import { AppRegistry } from 'react-native';
 import App from './App';
 import { name as appName } from './app.json';

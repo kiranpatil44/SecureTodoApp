@@ -9,7 +9,7 @@ import {
 
 /**
  * Todo Header Component
- * Displays app title and statistics (NO AUTHENTICATION STATUS)
+ * Displays app title, statistics, and authentication status
  */
 export default function TodoHeader({
   totalTodos,
@@ -17,12 +17,41 @@ export default function TodoHeader({
   pendingTodos,
   onClearCompleted,
   isLoading,
+  authCapability,
+  onLogout,
 }) {
   return (
     <View style={styles.container}>
       <View style={styles.titleSection}>
-        <Text style={styles.title}>My Todo List</Text>
-        <Text style={styles.subtitle}>Keep track of your tasks</Text>
+        <View style={styles.titleRow}>
+          <View>
+            <Text style={styles.title}>My Todo List</Text>
+            <Text style={styles.subtitle}>Keep track of your tasks</Text>
+          </View>
+          {authCapability?.isReady && (
+            <TouchableOpacity 
+              style={styles.logoutButton}
+              onPress={onLogout}
+            >
+              <Text style={styles.logoutText}>🔒</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        {authCapability && (
+          <View style={styles.authStatus}>
+            <View style={[
+              styles.authBadge,
+              authCapability.isReady ? styles.authSecure : styles.authUnsecure
+            ]}>
+              <Text style={[
+                styles.authText,
+                authCapability.isReady ? styles.authSecureText : styles.authUnsecureText
+              ]}>
+                {authCapability.isReady ? '🔒 Secured' : '🔓 Unsecured'}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
 
       <View style={styles.statsSection}>
@@ -73,6 +102,12 @@ const styles = StyleSheet.create({
   titleSection: {
     marginBottom: 16,
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -83,6 +118,41 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6c757d',
     fontWeight: '500',
+  },
+  logoutButton: {
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: '#f8f9fa',
+    borderWidth: 1,
+    borderColor: '#dee2e6',
+  },
+  logoutText: {
+    fontSize: 16,
+  },
+  authStatus: {
+    marginTop: 8,
+  },
+  authBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  authSecure: {
+    backgroundColor: '#d4edda',
+  },
+  authUnsecure: {
+    backgroundColor: '#fff3cd',
+  },
+  authText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  authSecureText: {
+    color: '#155724',
+  },
+  authUnsecureText: {
+    color: '#856404',
   },
   statsSection: {
     flexDirection: 'row',

@@ -1,12 +1,16 @@
 import React from 'react';
 import { StyleSheet, SafeAreaView, StatusBar, Platform } from 'react-native';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import TodoScreen from './src/screens/TodoScreen';
+import AuthScreen from './src/screens/AuthScreen';
 
 /**
- * Main App component for bare React Native project
- * Simple TODO app without authentication
+ * Main App Content Component
+ * Handles authentication flow
  */
-export default function App() {
+function AppContent() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
@@ -14,8 +18,20 @@ export default function App() {
         backgroundColor="#ffffff"
         translucent={false}
       />
-      <TodoScreen />
+      {isAuthenticated ? <TodoScreen /> : <AuthScreen />}
     </SafeAreaView>
+  );
+}
+
+/**
+ * Main App component for bare React Native project
+ * Todo app with biometric authentication using Expo Local Authentication
+ */
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

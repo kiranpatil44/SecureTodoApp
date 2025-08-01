@@ -14,15 +14,17 @@ import TodoItem from '../components/TodoItem';
 import TodoHeader from '../components/TodoHeader';
 import { todoReducer, initialState, todoActions } from '../reducers/todoReducer';
 import StorageService from '../services/StorageService';
+import { useAuth } from '../contexts/AuthContext';
 
 /**
  * Main Todo Screen Component
- * Manages todo list state and persistence (NO AUTHENTICATION)
+ * Manages todo list state and persistence with biometric authentication
  */
 export default function TodoScreen() {
   const [todos, dispatch] = useReducer(todoReducer, initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const { authenticate, authCapability, logout } = useAuth();
 
   /**
    * Load todos from storage on app start
@@ -82,20 +84,34 @@ export default function TodoScreen() {
   }, []);
 
   /**
-   * Delete a todo item
+   * Delete a todo item (requires authentication)
    */
-  const deleteTodo = useCallback((id) => {
+  const deleteTodo = useCallback(async (id) => {
+    if (authCapability?.isReady) {
+      const authenticated = await authenticate('Authenticate to delete this task');
+      if (!authenticated) {
+        return;
+      }
+    }
     dispatch(todoActions.deleteTodo(id));
-  }, []);
+  }, [authenticate, authCapability]);
 
   /**
-   * Clear all completed todos
+   * Clear all completed todos (requires authentication)
    */
-  const clearCompleted = useCallback(() => {
+  const clearCompleted = useCallback(async () => {
     const completedCount = todos.filter(todo => todo.completed).length;
     if (completedCount === 0) {
       Alert.alert('No Completed Tasks', 'There are no completed tasks to clear.');
       return;
+    }
+
+    // Require authentication for bulk deletion
+    if (authCapability?.isReady) {
+      const authenticated = await authenticate('Authenticate to clear completed tasks');
+      if (!authenticated) {
+        return;
+      }
     }
 
     Alert.alert(
@@ -110,7 +126,7 @@ export default function TodoScreen() {
         },
       ]
     );
-  }, [todos]);
+  }, [todos, authenticate, authCapability]);
 
   /**
    * Refresh todos from storage
@@ -146,6 +162,8 @@ export default function TodoScreen() {
         pendingTodos={pendingTodos}
         onClearCompleted={clearCompleted}
         isLoading={isLoading}
+        authCapability={authCapability}
+        onLogout={logout}
       />
 
       <TodoInput 
