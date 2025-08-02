@@ -1,17 +1,16 @@
 
-# ToDoList_Paidy.
 # Secure Todo App
 
 A secured TODO list application built with **bare React Native** and **Expo local-authentication** module. The app requires biometric/device authentication before allowing users to add, update, or delete todo items.
 
-## 🔐 Security Features
+## Security Features
 
 - **Biometric Authentication**: Face ID, Touch ID, or Fingerprint required for all CRUD operations
 - **Device Passcode Fallback**: Uses device passcode when biometrics unavailable
 - **Authentication Gate**: All modifications require user authentication
 - **Secure Data Storage**: Local data persistence with AsyncStorage
 
-## 🏗️ Architecture
+##  Architecture
 
 - **Bare React Native CLI Project** (not Expo managed)
 - **Clean State Management** with useReducer pattern
@@ -19,7 +18,7 @@ A secured TODO list application built with **bare React Native** and **Expo loca
 - **Component-based UI** with reusable components
 - **Robust Error Handling** and loading states
 
-## 📱 Features
+##  Features
 
 ✅ **Add new todos** (requires authentication)  
 ✅ **Edit existing todos** (requires authentication)  
@@ -39,12 +38,6 @@ A secured TODO list application built with **bare React Native** and **Expo loca
 - **useReducer** (State management)
 - **Jest + React Native Testing Library** (Unit testing)
 
-## 📋 Prerequisites
-
-- Node.js (16.0 or later)
-- React Native development environment
-- iOS Simulator / Android Emulator or physical device
-- Biometric authentication set up on test device
 
 ## 🚀 Installation & Setup
 
