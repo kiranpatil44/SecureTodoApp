@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useState, useCallback } from 'react';
+import React, { useReducer, useState } from 'react';
 import {
   View,
   Text,
@@ -7,181 +7,161 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  RefreshControl,
 } from 'react-native';
+import * as LocalAuthentication from 'expo-local-authentication';
 import TodoInput from '../components/TodoInput';
 import TodoItem from '../components/TodoItem';
-import TodoHeader from '../components/TodoHeader';
-import { todoReducer, initialState, todoActions } from '../reducers/todoReducer';
-import StorageService from '../services/StorageService';
+import { todoReducer, initialState } from '../reducers/todoReducer';
 
 /**
  * Main Todo Screen Component
- * Manages todo list state and persistence (NO AUTHENTICATION)
+ * Manages todo list state and handles authentication for CRUD operations
  */
 export default function TodoScreen() {
   const [todos, dispatch] = useReducer(todoReducer, initialState);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(true);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   /**
-   * Load todos from storage on app start
+   * Handles biometric/device authentication
+   * @returns {Promise<boolean>} - Authentication result
    */
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  /**
-   * Save todos to storage whenever state changes
-   */
-  useEffect(() => {
-    if (!isInitializing) {
-      StorageService.saveTodos(todos);
-    }
-  }, [todos, isInitializing]);
-
-  /**
-   * Load initial data from storage
-   */
-  const loadInitialData = async () => {
+  const authenticateUser = async () => {
     try {
-      setIsInitializing(true);
-      const savedTodos = await StorageService.loadTodos();
-      dispatch(todoActions.setTodos(savedTodos));
+      setIsAuthenticating(true);
+
+      // Check if device supports biometric authentication
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      if (!hasHardware) {
+        Alert.alert('Error', 'Biometric authentication not supported on this device');
+        return false;
+      }
+
+      // Check if biometric records are enrolled
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+      if (!isEnrolled) {
+        Alert.alert('Error', 'No biometric records found. Please set up biometric authentication in device settings.');
+        return false;
+      }
+
+      // Perform authentication
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: 'Authenticate to modify your todos',
+        fallbackLabel: 'Use device passcode',
+        disableDeviceFallback: false,
+      });
+
+      return result.success;
     } catch (error) {
-      console.error('Error loading initial data:', error);
-      Alert.alert('Error', 'Failed to load saved todos.');
+      console.error('Authentication error:', error);
+      Alert.alert('Error', 'Authentication failed. Please try again.');
+      return false;
     } finally {
-      setIsInitializing(false);
+      setIsAuthenticating(false);
+    }
+  };
+
+  /**
+   * Higher-order function that wraps actions requiring authentication
+   * @param {Function} action - The action to perform after authentication
+   * @returns {Function} - Wrapped function with authentication
+   */
+  const withAuthentication = (action) => async (...args) => {
+    if (isAuthenticating) return;
+
+    const isAuthenticated = await authenticateUser();
+    if (isAuthenticated) {
+      action(...args);
+    } else {
+      Alert.alert('Authentication Failed', 'You must authenticate to perform this action.');
     }
   };
 
   /**
    * Add a new todo item
+   * @param {string} text - Todo text content
    */
-  const addTodo = useCallback((text) => {
-    if (text && text.trim()) {
-      dispatch(todoActions.addTodo(text));
+  const addTodo = (text) => {
+    if (text.trim()) {
+      dispatch({
+        type: 'ADD_TODO',
+        payload: {
+          id: Date.now().toString(),
+          text: text.trim(),
+          completed: false,
+          createdAt: new Date().toISOString(),
+        },
+      });
     }
-  }, []);
-
-  /**
-   * Update existing todo text
-   */
-  const updateTodo = useCallback((id, text) => {
-    if (text && text.trim()) {
-      dispatch(todoActions.updateTodo(id, text));
-    }
-  }, []);
+  };
 
   /**
    * Toggle todo completion status
+   * @param {string} id - Todo item ID
    */
-  const toggleTodo = useCallback((id) => {
-    dispatch(todoActions.toggleTodo(id));
-  }, []);
+  const toggleTodo = (id) => {
+    dispatch({
+      type: 'TOGGLE_TODO',
+      payload: id,
+    });
+  };
+
+  /**
+   * Update todo text content
+   * @param {string} id - Todo item ID
+   * @param {string} newText - New text content
+   */
+  const updateTodo = (id, newText) => {
+    if (newText.trim()) {
+      dispatch({
+        type: 'UPDATE_TODO',
+        payload: { id, text: newText.trim() },
+      });
+    }
+  };
 
   /**
    * Delete a todo item
+   * @param {string} id - Todo item ID
    */
-  const deleteTodo = useCallback((id) => {
-    dispatch(todoActions.deleteTodo(id));
-  }, []);
-
-  /**
-   * Clear all completed todos
-   */
-  const clearCompleted = useCallback(() => {
-    const completedCount = todos.filter(todo => todo.completed).length;
-    if (completedCount === 0) {
-      Alert.alert('No Completed Tasks', 'There are no completed tasks to clear.');
-      return;
-    }
-
-    Alert.alert(
-      'Clear Completed Tasks',
-      `Are you sure you want to delete ${completedCount} completed task${completedCount !== 1 ? 's' : ''}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Clear',
-          style: 'destructive',
-          onPress: () => dispatch(todoActions.clearCompleted()),
-        },
-      ]
-    );
-  }, [todos]);
-
-  /**
-   * Refresh todos from storage
-   */
-  const onRefresh = useCallback(async () => {
-    setIsLoading(true);
-    await loadInitialData();
-    setIsLoading(false);
-  }, []);
-
-  // Calculate todo statistics
-  const totalTodos = todos.length;
-  const completedTodos = todos.filter(todo => todo.completed).length;
-  const pendingTodos = totalTodos - completedTodos;
-
-  if (isInitializing) {
-    return (
-      <View style={[styles.container, styles.centered]}>
-        <Text style={styles.loadingText}>Loading your todos...</Text>
-      </View>
-    );
-  }
+  const deleteTodo = (id) => {
+    dispatch({
+      type: 'DELETE_TODO',
+      payload: id,
+    });
+  };
 
   return (
     <KeyboardAvoidingView 
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
-      <TodoHeader
-        totalTodos={totalTodos}
-        completedTodos={completedTodos}
-        pendingTodos={pendingTodos}
-        onClearCompleted={clearCompleted}
-        isLoading={isLoading}
-      />
+      <View style={styles.header}>
+        <Text style={styles.title}>Secure Todo List</Text>
+        <Text style={styles.subtitle}>
+          {todos.length} task{todos.length !== 1 ? 's' : ''}
+        </Text>
+      </View>
 
       <TodoInput 
-        onAddTodo={addTodo} 
-        isLoading={isLoading}
+        onAddTodo={withAuthentication(addTodo)} 
+        isLoading={isAuthenticating}
       />
 
-      <ScrollView 
-        style={styles.todoList}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={onRefresh}
-            colors={['#007bff']}
-            tintColor="#007bff"
-          />
-        }
-      >
+      <ScrollView style={styles.todoList} showsVerticalScrollIndicator={false}>
         {todos.map((todo) => (
           <TodoItem
             key={todo.id}
             todo={todo}
             onToggle={toggleTodo}
-            onUpdate={updateTodo}
-            onDelete={deleteTodo}
-            isLoading={isLoading}
+            onUpdate={withAuthentication(updateTodo)}
+            onDelete={withAuthentication(deleteTodo)}
+            isLoading={isAuthenticating}
           />
         ))}
-        
         {todos.length === 0 && (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyTitle}>No todos yet! 📝</Text>
-            <Text style={styles.emptySubtitle}>
-              Add your first task above
-            </Text>
+            <Text style={styles.emptyText}>No todos yet!</Text>
+            <Text style={styles.emptySubtext}>Add your first task above</Text>
           </View>
         )}
       </ScrollView>
@@ -194,36 +174,39 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
-  centered: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  header: {
+    padding: 20,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
   },
-  loadingText: {
-    fontSize: 18,
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#212529',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
     color: '#6c757d',
-    fontWeight: '500',
   },
   todoList: {
     flex: 1,
-    paddingHorizontal: 16,
+    padding: 16,
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 80,
-    paddingHorizontal: 32,
+    paddingVertical: 60,
   },
-  emptyTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  emptySubtitle: {
-    fontSize: 16,
+  emptyText: {
+    fontSize: 20,
+    fontWeight: '600',
     color: '#6c757d',
-    textAlign: 'center',
-    lineHeight: 24,
+    marginBottom: 8,
+  },
+  emptySubtext: {
+    fontSize: 16,
+    color: '#adb5bd',
   },
 });

@@ -1,94 +1,48 @@
 /**
- * Todo Reducer for clean state management
- * Implements all CRUD operations for todo items
+ * Todo Reducer - Manages todo list state
+ * Implements clean and robust state management using useReducer pattern
  */
 
 export const initialState = [];
 
 /**
- * Action types for todo operations
- */
-export const TODO_ACTIONS = {
-  SET_TODOS: 'SET_TODOS',
-  ADD_TODO: 'ADD_TODO',
-  UPDATE_TODO: 'UPDATE_TODO',
-  TOGGLE_TODO: 'TOGGLE_TODO',
-  DELETE_TODO: 'DELETE_TODO',
-  CLEAR_COMPLETED: 'CLEAR_COMPLETED',
-};
-
-/**
- * Todo reducer function - manages all todo state changes
+ * Todo reducer function
+ * @param {Array} state - Current todo list state
+ * @param {Object} action - Action object with type and payload
+ * @returns {Array} - New state
  */
 export const todoReducer = (state, action) => {
   switch (action.type) {
-    case TODO_ACTIONS.SET_TODOS:
-      return action.payload;
-
-    case TODO_ACTIONS.ADD_TODO:
+    case 'ADD_TODO':
+      // Add new todo to the beginning of the list
       return [action.payload, ...state];
 
-    case TODO_ACTIONS.UPDATE_TODO:
-      return state.map(todo =>
-        todo.id === action.payload.id
-          ? { ...todo, text: action.payload.text, updatedAt: new Date().toISOString() }
-          : todo
-      );
-
-    case TODO_ACTIONS.TOGGLE_TODO:
+    case 'TOGGLE_TODO':
+      // Toggle completion status of specified todo
       return state.map(todo =>
         todo.id === action.payload
-          ? { ...todo, completed: !todo.completed, updatedAt: new Date().toISOString() }
+          ? { ...todo, completed: !todo.completed }
           : todo
       );
 
-    case TODO_ACTIONS.DELETE_TODO:
+    case 'UPDATE_TODO':
+      // Update text content of specified todo
+      return state.map(todo =>
+        todo.id === action.payload.id
+          ? {...todo, text: action.payload.text}
+          : todo,
+      );
+
+    case 'DELETE_TODO':
+      // Remove specified todo from list
       return state.filter(todo => todo.id !== action.payload);
 
-    case TODO_ACTIONS.CLEAR_COMPLETED:
+    case 'CLEAR_COMPLETED':
+      // Remove all completed todos
       return state.filter(todo => !todo.completed);
 
     default:
+      // Return current state for unknown actions
       return state;
   }
-};
-
-/**
- * Action creators for todo operations
- */
-export const todoActions = {
-  setTodos: (todos) => ({
-    type: TODO_ACTIONS.SET_TODOS,
-    payload: todos,
-  }),
-
-  addTodo: (text) => ({
-    type: TODO_ACTIONS.ADD_TODO,
-    payload: {
-      id: Date.now().toString(),
-      text: text.trim(),
-      completed: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  }),
-
-  updateTodo: (id, text) => ({
-    type: TODO_ACTIONS.UPDATE_TODO,
-    payload: { id, text: text.trim() },
-  }),
-
-  toggleTodo: (id) => ({
-    type: TODO_ACTIONS.TOGGLE_TODO,
-    payload: id,
-  }),
-
-  deleteTodo: (id) => ({
-    type: TODO_ACTIONS.DELETE_TODO,
-    payload: id,
-  }),
-
-  clearCompleted: () => ({
-    type: TODO_ACTIONS.CLEAR_COMPLETED,
-  }),
 };

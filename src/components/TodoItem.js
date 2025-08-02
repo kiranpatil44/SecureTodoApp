@@ -10,7 +10,7 @@ import {
 
 /**
  * Individual Todo Item Component
- * Displays and manages individual todo items (NO AUTHENTICATION REQUIRED)
+ * Displays and manages individual todo items with edit/delete functionality
  */
 export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -56,24 +56,9 @@ export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading
       'Are you sure you want to delete this todo?',
       [
         { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => onDelete(todo.id),
-        },
+        { text: 'Delete', style: 'destructive', onPress: () => onDelete(todo.id) },
       ]
     );
-  };
-
-  /**
-   * Format date for display
-   */
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
   };
 
   return (
@@ -82,8 +67,7 @@ export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading
       <TouchableOpacity
         style={[styles.checkbox, todo.completed && styles.checkboxCompleted]}
         onPress={() => onToggle(todo.id)}
-        disabled={isLoading || isEditing}
-        activeOpacity={0.7}
+        disabled={isLoading}
       >
         {todo.completed && <Text style={styles.checkmark}>✓</Text>}
       </TouchableOpacity>
@@ -98,20 +82,11 @@ export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading
             onSubmitEditing={handleSave}
             autoFocus
             multiline
-            maxLength={200}
           />
         ) : (
-          <>
-            <Text style={[styles.todoText, todo.completed && styles.todoTextCompleted]}>
-              {todo.text}
-            </Text>
-            <Text style={styles.dateText}>
-              Created: {formatDate(todo.createdAt)}
-              {todo.updatedAt !== todo.createdAt && (
-                <Text> • Updated: {formatDate(todo.updatedAt)}</Text>
-              )}
-            </Text>
-          </>
+          <Text style={[styles.todoText, todo.completed && styles.todoTextCompleted]}>
+            {todo.text}
+          </Text>
         )}
       </View>
 
@@ -119,36 +94,26 @@ export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading
       <View style={styles.actions}>
         {isEditing ? (
           <>
-            <TouchableOpacity 
-              style={styles.saveButton} 
-              onPress={handleSave}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.cancelButton} 
-              onPress={handleCancel}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
             <TouchableOpacity 
-              style={[styles.editButton, isLoading && styles.buttonDisabled]} 
+              style={styles.editButton} 
               onPress={handleEdit}
               disabled={isLoading}
-              activeOpacity={0.7}
             >
               <Text style={styles.editButtonText}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={[styles.deleteButton, isLoading && styles.buttonDisabled]} 
+              style={styles.deleteButton} 
               onPress={handleDelete}
               disabled={isLoading}
-              activeOpacity={0.7}
             >
               <Text style={styles.deleteButtonText}>Delete</Text>
             </TouchableOpacity>
@@ -165,18 +130,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     backgroundColor: '#ffffff',
     padding: 16,
-    marginVertical: 4,
+    marginBottom: 8,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#e9ecef',
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
   },
   checkbox: {
     width: 24,
@@ -206,26 +163,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#212529',
     lineHeight: 24,
-    marginBottom: 4,
   },
   todoTextCompleted: {
     textDecorationLine: 'line-through',
     color: '#6c757d',
   },
-  dateText: {
-    fontSize: 12,
-    color: '#adb5bd',
-    fontStyle: 'italic',
-  },
   editInput: {
     fontSize: 16,
     color: '#212529',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#007bff',
     borderRadius: 4,
     padding: 8,
     minHeight: 40,
-    textAlignVertical: 'top',
   },
   actions: {
     flexDirection: 'column',
@@ -282,8 +232,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 12,
     fontWeight: '600',
-  },
-  buttonDisabled: {
-    opacity: 0.5,
   },
 });

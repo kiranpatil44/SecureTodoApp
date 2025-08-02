@@ -1,19 +1,15 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, StatusBar, Platform } from 'react-native';
+import {StyleSheet, SafeAreaView, StatusBar} from 'react-native';
 import TodoScreen from './src/screens/TodoScreen';
 
 /**
- * Main App component for bare React Native project
- * Simple TODO app without authentication
+ * Main App component - Entry point of the application
+ * Provides safe area view and status bar configuration
  */
 export default function App() {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="#ffffff"
-        translucent={false}
-      />
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <TodoScreen />
     </SafeAreaView>
   );
@@ -23,6 +19,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });
