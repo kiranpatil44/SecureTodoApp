@@ -98,6 +98,9 @@ npx react-native run-ios
 
 
 
-https://github.com/user-attachments/assets/7bace1c7-e17e-4d95-84a8-c10bee70db45
+
+
+https://github.com/user-attachments/assets/b2bdb80f-e7d5-4920-b1d1-f882af591c4e
+
 
 
