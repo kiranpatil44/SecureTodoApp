@@ -37,8 +37,11 @@ export default function TodoInput({ onAddTodo, isLoading }) {
         returnKeyType="done"
         editable={!isLoading}
       />
-      <TouchableOpacity 
-        style={[styles.addButton, (!text.trim() || isLoading) && styles.addButtonDisabled]}
+      <TouchableOpacity
+        style={[
+          styles.addButton,
+          (!text.trim() || isLoading) && styles.addButtonDisabled,
+        ]}
         onPress={handleSubmit}
         disabled={!text.trim() || isLoading}
       >

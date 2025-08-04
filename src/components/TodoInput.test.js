@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, fireEvent, act} from '@testing-library/react-native';
+import { render, fireEvent, act } from '@testing-library/react-native';
 import TodoInput from './TodoInput';
 
 describe('TodoInput', () => {
@@ -10,7 +10,7 @@ describe('TodoInput', () => {
   });
 
   test('renders correctly', () => {
-    const {getByPlaceholderText, getByText} = render(
+    const { getByPlaceholderText, getByText } = render(
       <TodoInput onAddTodo={mockOnAddTodo} isLoading={false} />,
     );
 
@@ -19,7 +19,7 @@ describe('TodoInput', () => {
   });
 
   test('calls onAddTodo when add button is pressed with valid text', async () => {
-    const {getByPlaceholderText, getByText} = render(
+    const { getByPlaceholderText, getByText } = render(
       <TodoInput onAddTodo={mockOnAddTodo} isLoading={false} />,
     );
 
@@ -39,7 +39,7 @@ describe('TodoInput', () => {
   });
 
   test('does not call onAddTodo with empty text', async () => {
-    const {getByText} = render(
+    const { getByText } = render(
       <TodoInput onAddTodo={mockOnAddTodo} isLoading={false} />,
     );
 
@@ -53,7 +53,7 @@ describe('TodoInput', () => {
   });
 
   test('clears input after successful submission', async () => {
-    const {getByPlaceholderText, getByText} = render(
+    const { getByPlaceholderText, getByText } = render(
       <TodoInput onAddTodo={mockOnAddTodo} isLoading={false} />,
     );
 

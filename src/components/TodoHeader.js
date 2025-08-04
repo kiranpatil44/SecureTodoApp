@@ -30,14 +30,18 @@ export default function TodoHeader({
           <Text style={styles.statNumber}>{totalTodos}</Text>
           <Text style={styles.statLabel}>Total</Text>
         </View>
-        
+
         <View style={styles.statItem}>
-          <Text style={[styles.statNumber, styles.pendingNumber]}>{pendingTodos}</Text>
+          <Text style={[styles.statNumber, styles.pendingNumber]}>
+            {pendingTodos}
+          </Text>
           <Text style={styles.statLabel}>Pending</Text>
         </View>
-        
+
         <View style={styles.statItem}>
-          <Text style={[styles.statNumber, styles.completedNumber]}>{completedTodos}</Text>
+          <Text style={[styles.statNumber, styles.completedNumber]}>
+            {completedTodos}
+          </Text>
           <Text style={styles.statLabel}>Done</Text>
         </View>
       </View>

@@ -22,14 +22,14 @@ export const todoReducer = (state, action) => {
       return state.map(todo =>
         todo.id === action.payload
           ? { ...todo, completed: !todo.completed }
-          : todo
+          : todo,
       );
 
     case 'UPDATE_TODO':
       // Update text content of specified todo
       return state.map(todo =>
         todo.id === action.payload.id
-          ? {...todo, text: action.payload.text}
+          ? { ...todo, text: action.payload.text }
           : todo,
       );
 

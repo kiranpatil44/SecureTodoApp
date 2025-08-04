@@ -12,7 +12,13 @@ import {
  * Individual Todo Item Component
  * Displays and manages individual todo items with edit/delete functionality
  */
-export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading }) {
+export default function TodoItem({
+  todo,
+  onToggle,
+  onUpdate,
+  onDelete,
+  isLoading,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(todo.text);
 
@@ -20,7 +26,9 @@ export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading
    * Handle edit mode toggle
    */
   const handleEdit = () => {
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
     setIsEditing(true);
     setEditText(todo.text);
   };
@@ -49,16 +57,18 @@ export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading
    * Handle delete with confirmation
    */
   const handleDelete = () => {
-    if (isLoading) return;
-    
-    Alert.alert(
-      'Delete Todo',
-      'Are you sure you want to delete this todo?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => onDelete(todo.id) },
-      ]
-    );
+    if (isLoading) {
+      return;
+    }
+
+    Alert.alert('Delete Todo', 'Are you sure you want to delete this todo?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => onDelete(todo.id),
+      },
+    ]);
   };
 
   return (
@@ -84,7 +94,12 @@ export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading
             multiline
           />
         ) : (
-          <Text style={[styles.todoText, todo.completed && styles.todoTextCompleted]}>
+          <Text
+            style={[
+              styles.todoText,
+              todo.completed && styles.todoTextCompleted,
+            ]}
+          >
             {todo.text}
           </Text>
         )}
@@ -97,21 +112,24 @@ export default function TodoItem({ todo, onToggle, onUpdate, onDelete, isLoading
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={handleCancel}
+            >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
-            <TouchableOpacity 
-              style={styles.editButton} 
+            <TouchableOpacity
+              style={styles.editButton}
               onPress={handleEdit}
               disabled={isLoading}
             >
               <Text style={styles.editButtonText}>Edit</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.deleteButton} 
+            <TouchableOpacity
+              style={styles.deleteButton}
               onPress={handleDelete}
               disabled={isLoading}
             >

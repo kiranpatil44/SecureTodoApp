@@ -70,7 +70,7 @@ class AuthService {
       if (!hasHardware) {
         Alert.alert(
           'Authentication Unavailable',
-          'Biometric authentication hardware is not available on this device.'
+          'Biometric authentication hardware is not available on this device.',
         );
         return false;
       }
@@ -80,7 +80,7 @@ class AuthService {
       if (!isEnrolled) {
         Alert.alert(
           'Authentication Not Set Up',
-          'Please set up biometric authentication (Face ID, Touch ID, or Fingerprint) in your device settings.'
+          'Please set up biometric authentication (Face ID, Touch ID, or Fingerprint) in your device settings.',
         );
         return false;
       }
@@ -101,14 +101,23 @@ class AuthService {
           // User cancelled, don't show error
           return false;
         } else if (result.error === 'SystemCancel') {
-          Alert.alert('Authentication Cancelled', 'Authentication was cancelled by the system.');
+          Alert.alert(
+            'Authentication Cancelled',
+            'Authentication was cancelled by the system.',
+          );
         } else if (result.error === 'BiometricUnavailable') {
-          Alert.alert('Biometric Unavailable', 'Biometric authentication is currently unavailable.');
+          Alert.alert(
+            'Biometric Unavailable',
+            'Biometric authentication is currently unavailable.',
+          );
         } else if (result.error === 'UserFallback') {
           // User chose to use device passcode
           return false;
         } else {
-          Alert.alert('Authentication Failed', 'Authentication failed. Please try again.');
+          Alert.alert(
+            'Authentication Failed',
+            'Authentication failed. Please try again.',
+          );
         }
         return false;
       }
@@ -116,7 +125,7 @@ class AuthService {
       console.error('Authentication error:', error);
       Alert.alert(
         'Authentication Error',
-        'An error occurred during authentication. Please try again.'
+        'An error occurred during authentication. Please try again.',
       );
       return false;
     }
@@ -131,7 +140,11 @@ class AuthService {
       const types = await this.getSupportedAuthTypes();
       const typeNames = [];
 
-      if (types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
+      if (
+        types.includes(
+          LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
+        )
+      ) {
         typeNames.push('Face ID');
       }
       if (types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {

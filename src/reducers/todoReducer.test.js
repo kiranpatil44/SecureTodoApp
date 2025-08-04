@@ -1,4 +1,4 @@
-import {todoReducer} from '../reducers/todoReducer';
+import { todoReducer } from '../reducers/todoReducer';
 
 /**
  * Unit tests for todo reducer
@@ -43,7 +43,7 @@ describe('todoReducer', () => {
     const initialStateWithTodo = [mockTodo];
     const action = {
       type: 'UPDATE_TODO',
-      payload: {id: '1', text: 'Updated todo text'},
+      payload: { id: '1', text: 'Updated todo text' },
     };
 
     const newState = todoReducer(initialStateWithTodo, action);

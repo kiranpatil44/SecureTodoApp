@@ -32,14 +32,20 @@ export default function TodoScreen() {
       // Check if device supports biometric authentication
       const hasHardware = await LocalAuthentication.hasHardwareAsync();
       if (!hasHardware) {
-        Alert.alert('Error', 'Biometric authentication not supported on this device');
+        Alert.alert(
+          'Error',
+          'Biometric authentication not supported on this device',
+        );
         return false;
       }
 
       // Check if biometric records are enrolled
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
       if (!isEnrolled) {
-        Alert.alert('Error', 'No biometric records found. Please set up biometric authentication in device settings.');
+        Alert.alert(
+          'Error',
+          'No biometric records found. Please set up biometric authentication in device settings.',
+        );
         return false;
       }
 
@@ -65,22 +71,29 @@ export default function TodoScreen() {
    * @param {Function} action - The action to perform after authentication
    * @returns {Function} - Wrapped function with authentication
    */
-  const withAuthentication = (action) => async (...args) => {
-    if (isAuthenticating) return;
+  const withAuthentication =
+    action =>
+    async (...args) => {
+      if (isAuthenticating) {
+        return;
+      }
 
-    const isAuthenticated = await authenticateUser();
-    if (isAuthenticated) {
-      action(...args);
-    } else {
-      Alert.alert('Authentication Failed', 'You must authenticate to perform this action.');
-    }
-  };
+      const isAuthenticated = await authenticateUser();
+      if (isAuthenticated) {
+        action(...args);
+      } else {
+        Alert.alert(
+          'Authentication Failed',
+          'You must authenticate to perform this action.',
+        );
+      }
+    };
 
   /**
    * Add a new todo item
    * @param {string} text - Todo text content
    */
-  const addTodo = (text) => {
+  const addTodo = text => {
     if (text.trim()) {
       dispatch({
         type: 'ADD_TODO',
@@ -98,7 +111,7 @@ export default function TodoScreen() {
    * Toggle todo completion status
    * @param {string} id - Todo item ID
    */
-  const toggleTodo = (id) => {
+  const toggleTodo = id => {
     dispatch({
       type: 'TOGGLE_TODO',
       payload: id,
@@ -123,7 +136,7 @@ export default function TodoScreen() {
    * Delete a todo item
    * @param {string} id - Todo item ID
    */
-  const deleteTodo = (id) => {
+  const deleteTodo = id => {
     dispatch({
       type: 'DELETE_TODO',
       payload: id,
@@ -131,7 +144,7 @@ export default function TodoScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
@@ -142,13 +155,13 @@ export default function TodoScreen() {
         </Text>
       </View>
 
-      <TodoInput 
-        onAddTodo={withAuthentication(addTodo)} 
+      <TodoInput
+        onAddTodo={withAuthentication(addTodo)}
         isLoading={isAuthenticating}
       />
 
       <ScrollView style={styles.todoList} showsVerticalScrollIndicator={false}>
-        {todos.map((todo) => (
+        {todos.map(todo => (
           <TodoItem
             key={todo.id}
             todo={todo}
