@@ -12,13 +12,7 @@ import {
  * Individual Todo Item Component
  * Displays and manages individual todo items with edit/delete functionality
  */
-export default function TodoItem({
-  todo,
-  onToggle,
-  onUpdate,
-  onDelete,
-  isLoading,
-}) {
+export default function TodoItem({ todo, onUpdate, onDelete, isLoading }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(todo.text);
 
@@ -72,16 +66,7 @@ export default function TodoItem({
   };
 
   return (
-    <View style={styles.container}>
-      {/* Checkbox */}
-      <TouchableOpacity
-        style={[styles.checkbox, todo.completed && styles.checkboxCompleted]}
-        onPress={() => onToggle(todo.id)}
-        disabled={isLoading}
-      >
-        {todo.completed && <Text style={styles.checkmark}>✓</Text>}
-      </TouchableOpacity>
-
+    <View style={[styles.container, isLoading && styles.containerLoading]}>
       {/* Todo Content */}
       <View style={styles.content}>
         {isEditing ? (
@@ -92,6 +77,8 @@ export default function TodoItem({
             onSubmitEditing={handleSave}
             autoFocus
             multiline
+            placeholder="Enter todo text..."
+            placeholderTextColor="#7f8c8d"
           />
         ) : (
           <Text
@@ -109,12 +96,17 @@ export default function TodoItem({
       <View style={styles.actions}>
         {isEditing ? (
           <>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <TouchableOpacity
+              style={[styles.button, styles.saveButton]}
+              onPress={handleSave}
+              activeOpacity={0.8}
+            >
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.cancelButton}
+              style={[styles.button, styles.cancelButton]}
               onPress={handleCancel}
+              activeOpacity={0.8}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
@@ -122,16 +114,18 @@ export default function TodoItem({
         ) : (
           <>
             <TouchableOpacity
-              style={styles.editButton}
+              style={[styles.button, styles.editButton]}
               onPress={handleEdit}
               disabled={isLoading}
+              activeOpacity={0.8}
             >
               <Text style={styles.editButtonText}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.deleteButton}
+              style={[styles.button, styles.deleteButton]}
               onPress={handleDelete}
               disabled={isLoading}
+              activeOpacity={0.8}
             >
               <Text style={styles.deleteButtonText}>Delete</Text>
             </TouchableOpacity>
@@ -147,108 +141,113 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: '#ffffff',
-    padding: 16,
-    marginBottom: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
+    padding: 20,
+    marginBottom: 12,
     borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#dee2e6',
-    marginRight: 12,
-    marginTop: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ecf0f1',
+    shadowColor: '#2c3e50',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  checkboxCompleted: {
-    backgroundColor: '#28a745',
-    borderColor: '#28a745',
-  },
-  checkmark: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: 'bold',
+  containerLoading: {
+    opacity: 0.7,
   },
   content: {
     flex: 1,
-    marginRight: 12,
+    marginRight: 16,
   },
   todoText: {
     fontSize: 16,
-    color: '#212529',
+    fontWeight: '400',
+    color: '#2c3e50',
+    fontFamily: 'System',
     lineHeight: 24,
+    letterSpacing: 0.1,
   },
   todoTextCompleted: {
     textDecorationLine: 'line-through',
-    color: '#6c757d',
+    color: '#7f8c8d',
+    fontWeight: '300',
   },
   editInput: {
     fontSize: 16,
-    color: '#212529',
-    borderWidth: 1,
-    borderColor: '#007bff',
-    borderRadius: 4,
-    padding: 8,
-    minHeight: 40,
+    fontWeight: '400',
+    color: '#2c3e50',
+    fontFamily: 'System',
+    borderWidth: 2,
+    borderColor: '#3498db',
+    borderRadius: 8,
+    padding: 12,
+    minHeight: 44,
+    backgroundColor: '#ffffff',
+    letterSpacing: 0.1,
   },
   actions: {
     flexDirection: 'column',
     gap: 8,
   },
-  editButton: {
-    backgroundColor: '#007bff',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-    minWidth: 60,
+  button: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    minWidth: 70,
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  editButton: {
+    backgroundColor: '#e5258c',
   },
   editButtonText: {
     color: '#ffffff',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'System',
+    letterSpacing: 0.2,
   },
   deleteButton: {
-    backgroundColor: '#dc3545',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-    minWidth: 60,
-    alignItems: 'center',
+    backgroundColor: '#000000',
   },
   deleteButtonText: {
     color: '#ffffff',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'System',
+    letterSpacing: 0.2,
   },
   saveButton: {
-    backgroundColor: '#28a745',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-    minWidth: 60,
-    alignItems: 'center',
+    backgroundColor: '#e5258c',
   },
   saveButtonText: {
     color: '#ffffff',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'System',
+    letterSpacing: 0.2,
   },
   cancelButton: {
-    backgroundColor: '#6c757d',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-    minWidth: 60,
-    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    borderWidth: 1,
+    borderColor: '#dee2e6',
   },
   cancelButtonText: {
-    color: '#ffffff',
-    fontSize: 12,
+    color: '#6c757d',
+    fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'System',
+    letterSpacing: 0.2,
   },
 });

@@ -9,7 +9,6 @@ import {
 
 /**
  * Todo Header Component
- * Displays app title and statistics (NO AUTHENTICATION STATUS)
  */
 export default function TodoHeader({
   totalTodos,
@@ -51,6 +50,7 @@ export default function TodoHeader({
           style={[styles.clearButton, isLoading && styles.clearButtonDisabled]}
           onPress={onClearCompleted}
           disabled={isLoading}
+          activeOpacity={0.8}
         >
           {isLoading ? (
             <ActivityIndicator size="small" color="#ffffff" />
@@ -68,66 +68,99 @@ export default function TodoHeader({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
-    paddingTop: 20,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 20,
+    paddingHorizontal: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: '#ecf0f1',
+    shadowColor: '#2c3e50',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   titleSection: {
-    marginBottom: 16,
+    marginBottom: 20,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#212529',
-    marginBottom: 4,
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#2c3e50',
+    fontFamily: 'System',
+    marginBottom: 6,
+    letterSpacing: -0.5,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 14,
-    color: '#6c757d',
-    fontWeight: '500',
+    fontSize: 16,
+    color: '#7f8c8d',
+    fontWeight: '400',
+    fontFamily: 'System',
+    letterSpacing: 0.1,
+    textAlign: 'center',
   },
   statsSection: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 16,
+    marginBottom: 20,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
   },
   statItem: {
     alignItems: 'center',
+    flex: 1,
   },
   statNumber: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 4,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#2c3e50',
+    fontFamily: 'System',
+    marginBottom: 6,
+    letterSpacing: -0.3,
   },
   pendingNumber: {
-    color: '#ffc107',
+    color: '#e5258c', // Paidy's signature pink for pending items
   },
   completedNumber: {
-    color: '#28a745',
+    color: '#27ae60', // Green for completed items
   },
   statLabel: {
-    fontSize: 12,
-    color: '#6c757d',
+    fontSize: 13,
+    color: '#7f8c8d',
     textTransform: 'uppercase',
     fontWeight: '600',
-    letterSpacing: 0.5,
+    fontFamily: 'System',
+    letterSpacing: 0.8,
   },
   clearButton: {
-    backgroundColor: '#dc3545',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 6,
+    backgroundColor: '#000000', // Paidy's black for secondary actions
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   clearButtonDisabled: {
     opacity: 0.6,
   },
   clearButtonText: {
     color: '#ffffff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'System',
+    letterSpacing: 0.2,
   },
 });

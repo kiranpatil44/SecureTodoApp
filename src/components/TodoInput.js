@@ -10,7 +10,6 @@ import {
 
 /**
  * Todo Input Component
- * Handles user input for creating new todo items
  */
 export default function TodoInput({ onAddTodo, isLoading }) {
   const [text, setText] = useState('');
@@ -28,11 +27,11 @@ export default function TodoInput({ onAddTodo, isLoading }) {
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
+        style={[styles.input, text.trim() && styles.inputFocused]}
         value={text}
         onChangeText={setText}
         placeholder="What needs to be done?"
-        placeholderTextColor="#adb5bd"
+        placeholderTextColor="#7f8c8d"
         onSubmitEditing={handleSubmit}
         returnKeyType="done"
         editable={!isLoading}
@@ -44,6 +43,7 @@ export default function TodoInput({ onAddTodo, isLoading }) {
         ]}
         onPress={handleSubmit}
         disabled={!text.trim() || isLoading}
+        activeOpacity={0.8}
       >
         {isLoading ? (
           <ActivityIndicator color="#ffffff" size="small" />
@@ -58,38 +58,66 @@ export default function TodoInput({ onAddTodo, isLoading }) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: 16,
+    padding: 20,
     backgroundColor: '#ffffff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: '#ecf0f1',
+    shadowColor: '#2c3e50',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#dee2e6',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderWidth: 2,
+    borderColor: '#ecf0f1',
+    borderRadius: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     fontSize: 16,
-    backgroundColor: '#f8f9fa',
-    marginRight: 12,
+    fontWeight: '400',
+    fontFamily: 'System',
+    backgroundColor: '#ffffff',
+    marginRight: 16,
+    color: '#2c3e50',
+    letterSpacing: 0.1,
+    minHeight: 48,
+  },
+  inputFocused: {
+    borderColor: '#e5258c',
+    backgroundColor: '#ffffff',
   },
   addButton: {
-    backgroundColor: '#007bff',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: '#e5258c',
+    paddingHorizontal: 28,
+    paddingVertical: 14,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 80,
+    minWidth: 88,
+    shadowColor: '#e5258c',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   addButtonDisabled: {
-    backgroundColor: '#6c757d',
-    opacity: 0.6,
+    backgroundColor: '#dee2e6',
+    shadowOpacity: 0,
+    elevation: 0,
   },
   addButtonText: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'System',
+    letterSpacing: 0.2,
   },
 });
