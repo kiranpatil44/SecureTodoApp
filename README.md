@@ -94,3 +94,10 @@ cd ios && rm -rf Pods Podfile.lock && pod install && cd ..
 # Start fresh
 npx react-native start --reset-cache
 npx react-native run-ios
+
+
+
+
+https://github.com/user-attachments/assets/7bace1c7-e17e-4d95-84a8-c10bee70db45
+
+
